@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 var cors = require('cors')
+const helmet = require("helmet")
 
 // Creates the application
 const app = express()
@@ -8,6 +9,34 @@ const app = express()
 // Enable CORS, Cross-Origin Resource Sharing, to allow API to be accessed by web pages,
 // and other web origins
 app.use(cors());
+
+// Enable Helmet, a collection of 14 smaller middleware functions that set HTTP headers
+// to secure the application
+app.use(helmet());
+
+
+// =========================================================================================
+// Middleware order and error handling, if any error occurs in the application it will
+// be handled by the error-handling middleware
+// =========================================================================================
+// Error handling for invalid routes
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    res.status(404).send('Not Found');
+});
+
+// Error handling for bad requests
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    res.status(400).send('Bad Request');
+});
+
+// Error handling for internal server errors
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    res.status(500).send('Internal Server Error');
+});
+
 
 // Application parser to support JSON data format
 app.use(bodyParser.json({ type: 'application/json' }))
